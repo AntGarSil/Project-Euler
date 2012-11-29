@@ -1,7 +1,8 @@
 #Problem 1 of ProjectEuler.net
+require 'thread'
 
 def getMultiplesOfThree(limit)
-	var = 1;	
+	var = 1
 	result = []
 	
 	while var * 3 < limit
@@ -10,13 +11,12 @@ def getMultiplesOfThree(limit)
 		end
 		var += 1
 	end	
-	#puts result
-	multiplesum = addArray(result)
-	return multiplesum
+
+	return result
 end
 
 def getMultiplesOfFive(limit)
-	var = 1;	
+	var = 1
 	result = []
 	
 	while var * 5 < limit
@@ -25,10 +25,22 @@ def getMultiplesOfFive(limit)
 		end
 		var += 1
 	end	
-	#puts result
-	multiplesum = addArray(result)
-	return multiplesum
+	return result
 end
+
+def getMultiplesOfFifteen(limit)
+	var = 1
+	result = []
+	
+	while var * 15 < limit
+		if var * 15 < limit
+			result[var - 1] = var*15
+		end
+		var += 1
+	end	
+	return result
+end
+
 
 
 def addArray(multiples)
@@ -37,15 +49,50 @@ def addArray(multiples)
 	while var < multiples.length
 		sum += multiples[var]
 		var += 1
+		
 	end
+	#puts sum
 	return sum
 end
 
-mulfive = 0
-multhree = 0
-x = Thread.new { mulfive = getMultiplesOfFive(1000) } 
-y = Thread.new { multhree = getMultiplesOfThree(1000) } 
+
+mulfive = []
+multhree = []
+mulfifteen = []
+sumfive = 0
+sumthree = 0
+sumfifteen = 0
+
+mutex = Mutex.new
+cv = ConditionVariable.new
+cv2 = ConditionVariable.new
+
+
+x = Thread.new {
+	mulfive = getMultiplesOfFive(1000)
+	sumfive = addArray(mulfive)
+
+}
+
+y = Thread.new {
+	multhree = getMultiplesOfThree(1000)
+	sumthree = addArray(multhree)
+ 
+} 
+
+z = Thread.new {
+	mulfifteen = getMultiplesOfFifteen(1000)
+	sumfifteen = addArray(mulfifteen) 
+} 
+
 x.join  
 y.join
+z.join
 
-puts mulfive + multhree
+#Remove repeated values
+result = sumfive + sumthree - sumfifteen
+puts result
+
+
+# 233168
+# 266333
