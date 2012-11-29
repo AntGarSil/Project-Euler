@@ -83,4 +83,4 @@ end
  
  
  
-puts getSundayNumFromYearToYear(1901,2000)
+puts getSundayNumFromYearToYear(1900,2000)
